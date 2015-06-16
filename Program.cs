@@ -6,11 +6,28 @@ namespace UpVer
     {
         static void Main(string[] args)
         {
-            var settings = new Settings(args);
-            var updater = new VersionUpdater(settings);
-            var changes = updater.Process();
+            try
+            {
+                var settings = new Settings(args);
+                var updater = new VersionUpdater(settings);
 
-            Console.WriteLine("Bumped version from " + changes.Version(x => x.From) + " to " + changes.Version(x => x.To));
+                var changes = updater.Process();
+
+                if (settings.Read)
+                {
+                    Console.WriteLine("Current version: " + changes.Version(x => x.From));
+                }
+                else
+                {
+                    Console.WriteLine("Bumped version from " + changes.Version(x => x.From) + " to " + changes.Version(x => x.To));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(e.Message);
+            }
+            Console.ReadKey();
         }
     }
 }

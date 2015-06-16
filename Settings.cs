@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace UpVer
 {
@@ -7,26 +8,30 @@ namespace UpVer
         public bool Major { get; set; }
         public bool Minor { get; set; }
         public bool Patch { get; set; }
+        public bool Read { get; set; }
         public string File { get; set; }
 
-        private bool _setFile;
+        private bool _nextArgIsFilename;
 
         public Settings(string[] args)
         {
             foreach (var arg in args)
             {
-                if (arg.StartsWith("-f")) { _setFile = true; continue; }
-                if (_setFile) { File = Path.GetFullPath(arg); Reset(); continue; }
+                if (_nextArgIsFilename) File = Path.GetFullPath(arg); 
+                else if (arg.StartsWith("-f")) { _nextArgIsFilename = true; continue; }
+                else if (arg.StartsWith("--ma")) Major = true;
+                else if (arg.StartsWith("--mi")) Minor = true;
+                else if (arg.StartsWith("--p")) Patch = true;
+                else if (arg.StartsWith("--r")) Read = true;
+                else throw new Exception("Invalid argument: " + arg);
 
-                if (arg.StartsWith("--maj")) { Major = true; Reset(); continue; }
-                if (arg.StartsWith("--min")) { Minor = true; Reset(); continue; }
-                if (arg.StartsWith("--p")) { Patch = true; Reset(); continue; }
+                Reset();
             }
         }
 
         private void Reset()
         {
-            _setFile = false;
+            _nextArgIsFilename = false;
         }
     }
 }

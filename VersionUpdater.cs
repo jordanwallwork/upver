@@ -37,6 +37,12 @@ namespace UpVer
                 changes.Minor = Changes.NoChange(Get("minor"));
                 changes.Patch = Inc("patch");
             }
+            else if (_settings.Read)
+            {
+                changes.Major = Changes.NoChange(Get("major"));
+                changes.Minor = Changes.NoChange(Get("minor"));
+                changes.Patch = Changes.NoChange(Get("patch"));
+            }
             _config.Save(_filepath);
             return changes;
         }
